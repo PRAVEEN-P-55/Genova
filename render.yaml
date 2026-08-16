@@ -1,0 +1,24 @@
+services:
+  - type: web
+    name: genova-backend
+    env: node
+    region: singapore # Adjust if needed
+    buildCommand: cd server && npm install && npm run build
+    startCommand: cd server && npm start
+    envVars:
+      - key: NODE_VERSION
+        value: 22.6.0 # Required for node:sqlite
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 10000
+      - key: JWT_SECRET
+        generateValue: true
+      - key: DB_PATH
+        value: /data/genova.db
+      - key: UPLOAD_DIR
+        value: /data/uploads
+    disk:
+      name: genova-data
+      mountPath: /data
+      sizeGB: 1

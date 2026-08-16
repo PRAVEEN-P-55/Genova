@@ -1,3 +1,4 @@
+export const schemaSql = `
 -- GENOVA eDNA Biodiversity Intelligence Platform
 -- SQLite Database Schema
 
@@ -59,7 +60,7 @@ CREATE TABLE IF NOT EXISTS samples (
   file_md5 TEXT,
   sequencing_platform TEXT,
   barcode_markers TEXT,
-  status TEXT NOT NULL DEFAULT 'completed', -- queued, validating, qc, preprocessing, classifying, computing, risk_analysis, completed, failed
+  status TEXT NOT NULL DEFAULT 'completed',
   current_stage TEXT,
   progress_pct INTEGER DEFAULT 100,
   error_message TEXT,
@@ -101,12 +102,12 @@ CREATE TABLE IF NOT EXISTS taxonomy_classifications (
   kmer_score REAL NOT NULL,
   dnabert_score REAL NOT NULL,
   blast_score REAL NOT NULL,
-  iucn_status TEXT, -- LC, NT, VU, EN, CR, EW, EX, DD, NE
-  wpa_schedule TEXT, -- Schedule I, Schedule II, Schedule III, Schedule IV
+  iucn_status TEXT,
+  wpa_schedule TEXT,
   is_invasive INTEGER DEFAULT 0,
   native_region TEXT,
   impact_level TEXT,
-  xai_attention_weights TEXT, -- JSON array of {kmer, weight, position}
+  xai_attention_weights TEXT,
   created_at TEXT DEFAULT (datetime('now'))
 );
 
@@ -132,12 +133,12 @@ CREATE TABLE IF NOT EXISTS alerts (
   alert_id TEXT PRIMARY KEY,
   sample_id TEXT REFERENCES samples(sample_id),
   site_id TEXT REFERENCES sites(site_id),
-  alert_type TEXT NOT NULL, -- invasive_species, conservation_priority, anomaly_detected, health_drop
-  severity TEXT NOT NULL, -- critical, high, medium, low
+  alert_type TEXT NOT NULL,
+  severity TEXT NOT NULL,
   title TEXT NOT NULL,
   description TEXT NOT NULL,
   species_name TEXT,
-  recommended_actions TEXT, -- JSON array of strings
+  recommended_actions TEXT,
   is_acknowledged INTEGER DEFAULT 0,
   acknowledged_by TEXT,
   acknowledged_at TEXT,
@@ -167,30 +168,30 @@ CREATE TABLE IF NOT EXISTS predictions (
   model_type TEXT DEFAULT 'LSTM-Bidirectional',
   model_r2 REAL DEFAULT 0.887,
   model_rmse REAL DEFAULT 2.14,
-  forecast_series TEXT NOT NULL, -- JSON array of { month, baseline, predicted, upper, lower, alertThreshold }
+  forecast_series TEXT NOT NULL,
   created_at TEXT DEFAULT (datetime('now'))
 );
 
 CREATE TABLE IF NOT EXISTS reports (
   report_id TEXT PRIMARY KEY,
   title TEXT NOT NULL,
-  report_type TEXT NOT NULL, -- WPA_COMPLIANCE, NBSAP_ALIGNMENT, IUCN_REDLIST, FULL_SURVEY
+  report_type TEXT NOT NULL,
   site_id TEXT REFERENCES sites(site_id),
   sample_id TEXT REFERENCES samples(sample_id),
   generated_by TEXT NOT NULL,
   file_format TEXT DEFAULT 'PDF',
   file_size_kb INTEGER DEFAULT 240,
   hash_checksum TEXT NOT NULL,
-  metadata TEXT, -- JSON
+  metadata TEXT,
   created_at TEXT DEFAULT (datetime('now'))
 );
 
 CREATE TABLE IF NOT EXISTS assistant_messages (
   message_id TEXT PRIMARY KEY,
   user_id TEXT NOT NULL REFERENCES users(user_id),
-  role TEXT NOT NULL, -- user, assistant, system
+  role TEXT NOT NULL,
   content TEXT NOT NULL,
-  citations TEXT, -- JSON array of { title, reference, confidence, type }
+  citations TEXT,
   created_at TEXT DEFAULT (datetime('now'))
 );
 
@@ -201,3 +202,4 @@ CREATE TABLE IF NOT EXISTS knowledge_base (
   content TEXT NOT NULL,
   source TEXT NOT NULL
 );
+`;

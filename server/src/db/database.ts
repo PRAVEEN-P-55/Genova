@@ -20,10 +20,10 @@ if (!fs.existsSync(CONFIG.UPLOAD_DIR)) {
 export const db = new DatabaseSync(CONFIG.DB_PATH);
 db.exec('PRAGMA foreign_keys = ON;');
 
+import { schemaSql } from './schema.js';
+
 export function initDatabase() {
-  const schemaPath = path.resolve(__dirname, 'schema.sql');
-  if (fs.existsSync(schemaPath)) {
-    const schemaSql = fs.readFileSync(schemaPath, 'utf8');
+  if (schemaSql) {
     db.exec(schemaSql);
     console.log('[DB] SQLite Schema initialized successfully at:', CONFIG.DB_PATH);
   }
